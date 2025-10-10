@@ -1,7 +1,18 @@
 IG_UI_CN = 
 {
+    #menu
     IGUI_MyThings_TEST = "使用企鹅绷带"
+    
+    IGUI_UseMyBandage_4 = "使用企鹅肌贴"
+    IGUI_RemoveMyBandage_4 = "移除企鹅肌贴"
+    IGUI_Bandaged_4 = "- 贴上肌贴"
+
+    # items
     IGUI_MyBandaid_1 = "胡须企鹅创可贴"
-    IGUI_MyBandaid_2 = "阿德利企鹅贴纸"
-    IGUI_MyBandaid_3 = "我的绷带3"
+    IGUI_MyBandaid_2 = "阿德利企鹅创可贴"
+    IGUI_MyBandaid_4 = "王企鹅肌贴"
+
+
+
+
 }

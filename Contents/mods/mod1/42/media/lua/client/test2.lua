@@ -1,4 +1,4 @@
---local ApplyMyBandageAction = require("ISApplyMyBandage")
+require "ISApplyMyBandage"
 
 local myPlayerHandler = {}
 myPlayerHandler.__index = myPlayerHandler
@@ -7,11 +7,13 @@ myPlayerHandler.__index = myPlayerHandler
 local MY_BANDAGE_1_TYPE = "My_Bandaid_1"
 local MY_BANDAGE_1_TYPE_BASE = "Base.My_Bandaid_1"
 
-local MY_BANDAGE_2_TYPE = "My_Bandaid_2_test"
-local MY_BANDAGE_2_TYPE_BASE = "Base.My_Bandaid_2_test"
+local MY_BANDAGE_2_TYPE = "My_Bandaid_2"
+local MY_BANDAGE_2_TYPE_BASE = "Base.My_Bandaid_2"
 
-local MY_BANDAGE_3_TYPE_BASE = "Base.My_Bandaid_3_test"
+local MY_BANDAGE_3_TYPE = "My_Bandaid_3"
+local MY_BANDAGE_3_TYPE_BASE = "Base.My_Bandaid_3"
 
+local MY_BANDAGE_4_TYPE = "My_Bandaid_4"
 local MY_BANDAGE_4_TYPE_BASE = "Base.My_Bandaid_4"
 
 local timer = 0
@@ -84,8 +86,8 @@ function myPlayerHandler:checkMyBandaidOnBodyPart(bodyPart)
 end
 
 
-local test = ISApplyMyBandage.complete
-function ISApplyMyBandage:complete()
+local test = ISApplyBandage.complete
+function ISApplyBandage:complete()
     test(self)
 
     local bandage = self.item
@@ -218,13 +220,22 @@ local function playerCheck_2()
         -- print(bodyPart:getType())
         -- print("stiffness is "..stiffness)
 
-        if stiffness > 0 and bodyPart:getBandageType() == MY_BANDAGE_4_TYPE_BASE then
-            bodyPart:setStiffness(math.max(0 , stiffness - 1))
+        if stiffness > 0 and IsMyBandaged(bodyPart) then
+            bodyPart:setStiffness(math.max(0 , stiffness - MyBandage_4_speed))
 
-            local bandageLife = bodyPart:getBandageLife()
-            bodyPart:setBandageLife(math.max(0, bandageLife - .5))
+            local timeLeft = MyGetBandageTimeLeft(bodyPart)
+            print("timeLeft is "..timeLeft)
+
+            local newTimeLeft =math.max(0, timeLeft - MyBandage_4_speed)
+            MySetBandageTimeLeft(bodyPart, newTimeLeft)
+            if newTimeLeft == 0 then
+                MySetBandaged(bodyPart, false , 0)
+            end
+            
+
+            -- local bandageLife = bodyPart:getBandageLife()
+            -- bodyPart:setBandageLife(math.max(0, bandageLife - .5))
         end
-
 
 
     end
@@ -251,7 +262,7 @@ end)
 
 local function applyBandageToPlayer(player, targetPlayer, bandageItem, bodyPart)
     -- 创建绷带使用动作
-    local action = ISApplyMyBandage:new(
+    local action = ISApplyBandage:new(
         player,          -- 执行动作的玩家
         targetPlayer,    -- 目标玩家(可以是自己)
         bandageItem,     -- 绷带物品
@@ -278,6 +289,34 @@ local function GetMyBandageItem(player)
     return bandageItem
 end
 
+---@param bodyPart BodyPart
+---@param character IsoPlayer
+---@param targetPlayer IsoPlayer
+---@param item InventoryItem
+local function useMyBandage(character, targetPlayer, bodyPart , item)
+    if not playerHandler then
+        print("no playerHandler")
+        return
+    end
+
+    if not playerHandler.playerObj then
+        print("no playerObj")
+        return
+    end
+
+    local action = ISApplyMyBandage:new(
+        character,          -- 使用绷带的玩家
+        targetPlayer,    -- 目标玩家
+        item,     -- 绷带物品
+        bodyPart,        -- 身体部位
+        true            -- 是否立即执行
+    )
+    
+    -- 添加到动作队列
+    if action:isValid() then
+        ISTimedActionQueue.add(action)
+    end
+end
 
 
 local og_ISHealthPanel_doBodyPartContextMenu = ISHealthPanel.doBodyPartContextMenu
@@ -300,37 +339,87 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
 
     context:bringToTop()
     context:setVisible(true)
+    
+    local myBandage_4_item = GetMyBandageItem(playerHandler.playerObj)
 
-    context:addOption("Test Option", nil, function()
-        print("Test Option clicked")
+    if myBandage_4_item == nil then
+        print("no bandage item")
+        return
+    end
 
+    if IsMyBandaged(bodyPart) then
+        local removeBandage_4_option = context:addOption(getText("IGUI_RemoveMyBandage_4"), nil, function()
+            print("Remove My Bandage clicked")
 
+            if not playerHandler.playerObj then
+                print("no playerObj")
+                return
+            end
 
+            local action = ISApplyMyBandage:new(
+                self.character,
+                self.otherPlayer or self.character,
+                nil,
+                bodyPart,
+                true
+            )
+            
+            -- 添加到动作队列
+            if action:isValid() then
+                ISTimedActionQueue.add(action)
+            end
+        end)
+        removeBandage_4_option.iconTexture = getTexture("media/textures/item_MyBandaid4.png")
 
-        if not playerHandler.playerObj then
+    else
+        if not playerHandler then
             print("no playerObj")
             return
         end
 
-        -- applyBandageToPlayer(self.character, self.otherPlayer or self.character, GetMyBandageItem(playerHandler.playerObj), bodyPart)
 
-        local action = ISApplyMyBandage:new(
-            self.character,          -- 使用绷带的玩家
-            self.otherPlayer or self.character,    -- 目标玩家
-            GetMyBandageItem(playerHandler.playerObj),     -- 绷带物品
-            bodyPart,        -- 身体部位
-            true            -- 是否立即执行
-        )
 
-        -- 添加到动作队列
-        if action:isValid() then
-            ISTimedActionQueue.add(action)
+        if not playerHandler.playerObj:getInventory():contains(MY_BANDAGE_4_TYPE_BASE) then
+            return
         end
 
+        local applyBandage_4_option = context:addOption(getText("IGUI_UseMyBandage_4"),nil,function ()
 
-    end)
+            print("Use My Bandage clicked")
+            useMyBandage(self.character, self.otherPlayer or self.character, bodyPart, myBandage_4_item)
+        end)
+
+        applyBandage_4_option.iconTexture = getTexture("media/textures/item_MyBandaid4.png")
+
+    end
 end
 
+-- TO DO 实现进度条显示
+local og_ISHealthBodyPartListBox_doDrawItem = ISHealthBodyPartListBox.doDrawItem
+function ISHealthBodyPartListBox:doDrawItem(y, item, alt)
+    -- 调用原始函数并获取返回的y坐标
+    y = og_ISHealthBodyPartListBox_doDrawItem(self, y, item, alt)
+    
+    -- 设置文本起始位置和样式
+    local x = 15  -- 文本缩进
+    y = y - 5     -- 微调y坐标
+    local fontHgt = getTextManager():getFontHeight(UIFont.Small)
+    
+    -- 获取身体部位信息
+    -- ---@type BodyPart
+    -- local bodyPart = item.item.bodyPart
+    -- local bodyPartType = bodyPart:getType()
+    
+    if IsMyBandaged(item.item.bodyPart) then
+        self:drawText(getText("IGUI_Bandaged_4") , x, y, 0.28, 0.89, 0.28, 1, UIFont.Small)
+
+
+        y = y + fontHgt
+    end
+
+    y = y + 5
+    return y
+end
 
 
 

@@ -16,6 +16,22 @@ module Base
 
         # Tags = FitsWallet;MyThings,
     }
+    item My_Bandaid_1_test
+    {
+        DisplayCategory = FirstAid,
+        Type = Normal,
+        Weight = 0.05,
+        Icon = MyBandaid1,
+        Alcoholic = true,
+
+        BandagePower = 100,  --影响绷带变脏时间
+        CanBandage = true,
+        Medical = true,
+        # Tooltip = Tooltip_UseOnHealthPanel,!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        WorldStaticModel = BandAid,
+
+        # Tags = FitsWallet;MyThings,
+    }
     item My_Bandaid_2
     {
         DisplayCategory = FirstAid,
@@ -25,6 +41,22 @@ module Base
         Alcoholic = true,
 
         BandagePower = 6,  --影响绷带变脏时间
+        CanBandage = true,
+        Medical = true,
+        # Tooltip = Tooltip_UseOnHealthPanel,!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        WorldStaticModel = BandAid,
+
+        # Tags = FitsWallet;MyThings,
+    }
+        item My_Bandaid_2_test
+    {
+        DisplayCategory = FirstAid,
+        Type = Normal,
+        Weight = 0.05,
+        Icon = MyBandaid1,
+        Alcoholic = true,
+
+        BandagePower = 100,  --影响绷带变脏时间
         CanBandage = true,
         Medical = true,
         # Tooltip = Tooltip_UseOnHealthPanel,!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -48,25 +80,6 @@ module Base
 
         # Tags = FitsWallet;MyThings,
     }
-    item My_Bandaid_4
-    {
-        DisplayCategory = FirstAid,
-        Type = Normal,
-        Weight = 0.05,
-        Icon = MyBandaid2,
-
-
-        BandagePower = 6,  --影响绷带变脏时间
-        # Alcoholic = true,
-        # CanBandage = true,
-        # Medical = true,
-
-        
-        # Tooltip = Tooltip_UseOnHealthPanel,!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        WorldStaticModel = BandAid,
-
-        # Tags = FitsWallet;MyThings,
-    }
     item My_Bandaid_3_test
     {
         DisplayCategory = FirstAid,
@@ -83,37 +96,20 @@ module Base
 
         # Tags = FitsWallet;MyThings,
     }
-    item My_Bandaid_2_test
+    item My_Bandaid_4
     {
         DisplayCategory = FirstAid,
         Type = Normal,
         Weight = 0.05,
-        Icon = MyBandaid1,
-        Alcoholic = true,
-
-        BandagePower = 100,  --影响绷带变脏时间
-        CanBandage = true,
-        Medical = true,
+        Icon = MyBandaid4,
+ 
         # Tooltip = Tooltip_UseOnHealthPanel,!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         WorldStaticModel = BandAid,
 
         # Tags = FitsWallet;MyThings,
     }
-    item My_Bandaid_test
-    {
-        DisplayCategory = FirstAid,
-        Type = Normal,
-        Weight = 0.05,
-        Icon = MyBandaid1,
-        Alcoholic = true,
 
-        BandagePower = 100,  --影响绷带变脏时间
-        CanBandage = true,
-        Medical = true,
-        # Tooltip = Tooltip_UseOnHealthPanel,!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        WorldStaticModel = BandAid,
 
-        # Tags = FitsWallet;MyThings,
-    }
+
 
 }
