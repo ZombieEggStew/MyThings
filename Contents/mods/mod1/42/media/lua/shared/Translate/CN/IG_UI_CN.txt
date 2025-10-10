@@ -1,0 +1,7 @@
+IG_UI_CN = 
+{
+    IGUI_MyThings_TEST = "使用企鹅绷带"
+    IGUI_MyBandaid_1 = "胡须企鹅创可贴"
+    IGUI_MyBandaid_2 = "阿德利企鹅贴纸"
+    IGUI_MyBandaid_3 = "我的绷带3"
+}

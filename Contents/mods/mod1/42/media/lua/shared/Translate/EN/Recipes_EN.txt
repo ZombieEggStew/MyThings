@@ -1,0 +1,8 @@
+Recipes_EN = 
+{
+    Recipe_SewComfortableLongjohnsCool = "Sew Comfortable Cool Longjohns"
+    Recipe_SewComfortableLongjohnsWarm = "Sew Comfortable Warm Longjohns"
+
+    Recipe_SewComfortableSocksCool = "Sew Comfortable Cool Socks"
+    Recipe_SewComfortableSocksWarm = "Sew Comfortable Warm Socks"
+}
