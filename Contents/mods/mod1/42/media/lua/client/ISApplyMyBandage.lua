@@ -204,7 +204,7 @@ function ISApplyMyBandage:perform()
     ISBaseTimedAction.perform(self)
 end
 
-function ISApplyMyBandage:getDuration(defaultTime,doctorLevel)
+function ISApplyMyBandage:getDuration(doctorLevel)
 
     -- 计算动作持续时间
     local duration = 200 * (1 - doctorLevel * 0.05) -- 每级减少5%时间
