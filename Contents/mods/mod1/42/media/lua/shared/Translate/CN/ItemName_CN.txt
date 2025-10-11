@@ -2,7 +2,8 @@ ItemName_CN =
 {
     ItemName_Base.My_Bandaid_1 = "胡须企鹅创可贴"
     ItemName_Base.My_Bandaid_2 = "阿德利企鹅创可贴"
-    ItemName_Base.My_Bandaid_3 = "我的绷带3"
-    ItemName_Base.My_Bandaid_4 = "王企鹅肌贴"
+    ItemName_Base.My_Bandaid_3 = "斑嘴环企鹅创可贴"
+    ItemName_Base.My_Bandaid_4 = "王企鹅创可贴"
+    ItemName_Base.My_Bandaid_5 = "冠企鹅创可贴"
 
 }
