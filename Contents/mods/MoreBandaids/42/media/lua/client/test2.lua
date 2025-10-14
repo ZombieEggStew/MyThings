@@ -71,9 +71,9 @@ end
 -- end
 
 
-local test = ISApplyBandage.complete
+local test___ = ISApplyBandage.complete
 function ISApplyBandage:complete()
-    test(self)
+    test___(self)
 
     local bandage = self.item
 
@@ -82,17 +82,18 @@ function ISApplyBandage:complete()
     if not bandage then
         print("Bandage removal completed")
         self.bodyPart:setPlantainFactor(0.0)
+
         return
     end
 
     -- bandage_1
     if bandage:getType() == MY_BANDAGE_1_TYPE then
         print("MyBandaid_1")
-        local t = self.bodyPart:getPlantainFactor()
+        --local t = self.bodyPart:getPlantainFactor()
 
         local t2 = self.bodyPart:getBandageLife()
 
-        self.bodyPart:setPlantainFactor(t + t2 * 10)
+        self.bodyPart:setPlantainFactor(t2 * 10)
 
 
 
@@ -120,6 +121,7 @@ local function playerCheck()
 
 
         local bodyPart = playerHandler.bodyParts:get(i)
+        print(tostring(bodyPart:getType()) .. tostring(bodyPart:getBandageType()) .. tostring(bodyPart:bandaged()))
 
         -- 加快烧伤恢复
         -- if bodyPart:isBurnt() then
@@ -131,10 +133,10 @@ local function playerCheck()
         --     end
         -- end
 
+        local t = bodyPart:getStitchTime()
 
         if bodyPart:stitched() then
-            local t = bodyPart:getStitchTime()
-            print(t)
+
 
             if bodyPart:getBandageType() == MY_BANDAGE_2_TYPE_BASE and t < 50 then
                 bodyPart:setStitchTime(math.min(50,t + 1))
@@ -164,14 +166,26 @@ local function playerCheck_2()
 
     for i=0, playerHandler.bodyParts:size()-1 do
         local bodyPart = playerHandler.bodyParts:get(i)
+
+        local bandageType__ = bodyPart:getBandageType()
         
+
         local isBandage_4 = IsMyBandaged(bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_4)
         local isBandage_5 = IsMyBandaged(bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_5)
 
         -- if (not isBandage_4) and (not isBandage_5) then
         --     return
         -- end
-        
+
+
+        if  bodyPart:bandaged() and bandageType__ == MY_BANDAGE_2_TYPE_BASE then 
+            local t = bodyPart:getStitchTime()
+            print(tostring(bodyPart:getType()) .. t)
+            if t > 0 and t < 50 then
+
+                bodyPart:setStitchTime(math.min(50,t + .025))
+            end
+        end
 
 
         local stiffness = bodyPart:getStiffness()
@@ -249,8 +263,10 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
         return
     end
 
+    local isBandage_3 = IsMyBandaged(bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_3)
     local isBandage_4 = IsMyBandaged(bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_4)
     local isBandage_5 = IsMyBandaged(bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_5)
+    local haveBandage_3 = playerHandler.playerObj:getInventory():contains(CONFIG_my_bandageTypes.My_Bandaid_3)
     local haveBandage_4 = playerHandler.playerObj:getInventory():contains(CONFIG_my_bandageTypes.My_Bandaid_4)
     local haveBandage_5 = playerHandler.playerObj:getInventory():contains(CONFIG_my_bandageTypes.My_Bandaid_5)
 
@@ -265,6 +281,8 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
 
     context:bringToTop()
     context:setVisible(true)
+
+
 
 
     -- remove bandage4
@@ -310,7 +328,26 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
     end
 
 
-    
+    -- remove bandage3
+    if isBandage_3 then
+        local removeBandage_3_option = context:addOption(getText("IGUI_RemoveMyBandage_3"), nil, function()
+            print("Remove My Bandage clicked")
+
+            ApplyMyBandageAction(self.character, self.otherPlayer or self.character, bodyPart, CONFIG_my_bandageTypes.My_Bandaid_3 , false)
+        end)
+        removeBandage_3_option.iconTexture = getTexture("media/textures/item_MyBandaid3.png")
+    else
+    -- apply bandage3
+        if  haveBandage_3 then
+            local applyBandage_3_option = context:addOption(getText("IGUI_UseMyBandage_3"),nil,function ()
+
+                print("Use My Bandage clicked")
+                ApplyMyBandageAction(self.character, self.otherPlayer or self.character, bodyPart, CONFIG_my_bandageTypes.My_Bandaid_3 ,true)
+            end)
+
+            applyBandage_3_option.iconTexture = getTexture("media/textures/item_MyBandaid3.png")
+        end 
+    end
 
 
 end
@@ -326,7 +363,12 @@ function ISHealthBodyPartListBox:doDrawItem(y, item, alt)
     y = y - 5     -- 微调y坐标
     local fontHgt = getTextManager():getFontHeight(UIFont.Small)
 
+    local progressBarWidth = 150
+    local progressBarHight = 25
+    local progressBarTextMargin_Left = 5
+    local textMargin_Bottom = 5
 
+    local isBandage_3 = IsMyBandaged(item.item.bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_3)
     local isBandage_4 = IsMyBandaged(item.item.bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_4)
     local isBandage_5 = IsMyBandaged(item.item.bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_5)
     
@@ -334,17 +376,33 @@ function ISHealthBodyPartListBox:doDrawItem(y, item, alt)
     -- ---@type BodyPart
     -- local bodyPart = item.item.bodyPart
     -- local bodyPartType = bodyPart:getType()
-    
+
+    if GetIsBodyPartBandaing(item.item.bodyPart) then
+        self:drawRect(x, y, progressBarWidth , progressBarHight, .9, .15, .15, .15)
+        self:drawRect(x, y, progressBarWidth * GetBandagingProgress(), progressBarHight, .9 ,.35, .35, .35)
+        if GetIsRemoving() then
+            self:drawText(getText("IGUI_Removing"), x + progressBarTextMargin_Left, y, .8, .8, .8, 1, UIFont.Small)
+        else
+            self:drawText(getText("IGUI_Bandaging"), x + progressBarTextMargin_Left, y, .8, .8, .8, 1, UIFont.Small)
+        end
+        y = y + progressBarHight
+    end
+
+
+
     if isBandage_4 then
         self:drawText(getText("IGUI_Bandaged_4") .. " : " .. GetMyBandageTimeLeft(item.item.bodyPart , CONFIG_my_bandageTypes.My_Bandaid_4), x, y, 0.28, 0.89, 0.28, 1, UIFont.Small)
-        y = y + fontHgt
+        y = y + fontHgt + textMargin_Bottom
     end
 
     if isBandage_5 then
         self:drawText(getText("IGUI_Bandaged_5") .." : ".. GetMyBandageTimeLeft(item.item.bodyPart , CONFIG_my_bandageTypes.My_Bandaid_5), x, y, 0.28, 0.89, 0.28, 1, UIFont.Small)
-        y = y + fontHgt
+        y = y + fontHgt + textMargin_Bottom
     end
-
+    if isBandage_3 then
+        self:drawText(getText("IGUI_Bandaged_3"), x, y, 0.28, 0.89, 0.28, 1, UIFont.Small)
+        y = y + fontHgt + textMargin_Bottom
+    end
     y = y + 5
     return y
 end
@@ -355,7 +413,7 @@ local timeAcc = 0
 
 
 
-Events.EveryOneMinute.Add(playerCheck)
+-- Events.EveryOneMinute.Add(playerCheck)
 
 
 Events.OnTick.Add(function ()
@@ -389,3 +447,6 @@ end)
 
 
 --TO DO 为所有绷带添加耐久
+--TO DO 测试60帧 无highFPSmod
+
+

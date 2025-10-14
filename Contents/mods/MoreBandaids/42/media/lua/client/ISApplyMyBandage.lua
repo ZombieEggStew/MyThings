@@ -7,95 +7,6 @@ CONFIG_DefaultBandage_4_ConsumptionRate = 1 -- 绷带消耗速度倍率
 CONFIG_DefaultBandage_5_ConsumptionRate = 1 -- 绷带消耗速度倍率
 local isPlayerCreated = false
 
-local CONFIG_MyBandageSystem_old = {
-    Hand_L = {bandaged = false, timeLeft = 0},
-    Hand_R = {bandaged = false, timeLeft = 0},
-    ForeArm_L = {bandaged = false, timeLeft = 0},
-    ForeArm_R = {bandaged = false, timeLeft = 0},
-    UpperArm_L = {bandaged = false, timeLeft = 0},
-    UpperArm_R = {bandaged = false, timeLeft = 0},
-    Torso_Upper = {bandaged = false, timeLeft = 0},
-    Torso_Lower = {bandaged = false, timeLeft = 0},
-    Head = {bandaged = false, timeLeft = 0},
-    Neck = {bandaged = false, timeLeft = 0},
-    Groin = {bandaged = false, timeLeft = 0},
-    UpperLeg_L = {bandaged = false, timeLeft = 0},
-    UpperLeg_R = {bandaged = false, timeLeft = 0},
-    LowerLeg_L = {bandaged = false, timeLeft = 0},
-    LowerLeg_R = {bandaged = false, timeLeft = 0},
-    Foot_L = {bandaged = false, timeLeft = 0},
-    Foot_R = {bandaged = false, timeLeft = 0},
-}
-local CONFIG_MyBandageSystem = {
-    Hand_L = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    Hand_R = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    ForeArm_L = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    ForeArm_R = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    UpperArm_L = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    UpperArm_R = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    Torso_Upper = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    Torso_Lower = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    Head = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    Neck = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    Groin = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    UpperLeg_L = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    UpperLeg_R = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    LowerLeg_L = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    LowerLeg_R = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    Foot_L = {
-        bandage_4 ={bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    },
-    Foot_R = {
-        bandage_4 = {bandaged = false, timeLeft = 0},
-        bandage_5 = {bandaged = false, timeLeft = 0}
-    }
-}
 
 CONFIG_my_bodyParts = {
     "Hand_L", "Hand_R", "ForeArm_L", "ForeArm_R", "UpperArm_L", "UpperArm_R",
@@ -103,13 +14,36 @@ CONFIG_my_bodyParts = {
     "UpperLeg_L", "UpperLeg_R", "LowerLeg_L", "LowerLeg_R", "Foot_L", "Foot_R"
 }
 CONFIG_my_bandageTypes = {
+    My_Bandaid_3 = "My_Bandaid_3",
     My_Bandaid_4 = "My_Bandaid_4",
     My_Bandaid_5 = "My_Bandaid_5"
 }
 CONFIG_my_Base_bandageTypes = {
+    My_Bandaid_3 = "Base.My_Bandaid_3",
     My_Bandaid_4 = "Base.My_Bandaid_4",
     My_Bandaid_5 = "Base.My_Bandaid_5"
 }
+
+local currentBodyPart = nil
+local isApplying = false
+local isRemoving = false
+local bandagingProgress = 0
+
+
+---@return boolean
+---@param bodyPart BodyPart
+function GetIsBodyPartBandaing(bodyPart)
+    return bodyPart == currentBodyPart and isApplying
+end
+
+function GetIsRemoving()
+    return isRemoving
+end
+
+---@return number
+function GetBandagingProgress()
+    return bandagingProgress
+end
 
 local function initMyBandageSystem()
     local system = {}
@@ -127,19 +61,18 @@ end
 Events.OnCreatePlayer.Add(function(playerNum,player)
     _player = player
     _playerModData = _player:getModData()
+    -- _playerModData.MyBandageSystem = initMyBandageSystem()
 
     if not _playerModData.MyBandageSystem then
         _playerModData.MyBandageSystem = initMyBandageSystem()
-        return
     end
 
-    for _, v in pairs(_playerModData.MyBandageSystem) do
-        if type(v) == "table" and (v.bandaged ~= nil or v.timeLeft ~= nil) then
-            _playerModData.MyBandageSystem = initMyBandageSystem()
-            break
-        end
-        
-    end
+    -- for _, v in pairs(_playerModData.MyBandageSystem) do
+    --     if type(v) == "table" and (v.bandaged ~= nil or v.timeLeft ~= nil) then
+    --         _playerModData.MyBandageSystem = initMyBandageSystem()
+    --         break
+    --     end
+    -- end
     isPlayerCreated = true
 end)
 
@@ -191,12 +124,12 @@ end
 ---@param playerObj IsoPlayer
 ---@param bandageType string -- no base
 function RemoveMyBandageFromInv(playerObj , bandageType)
-   playerObj:getInventory():Remove("Base."..bandageType)
+   playerObj:getInventory():Remove(bandageType)
 end
 ---@param playerObj IsoPlayer
 ---@param bandageType string -- no base
 function AddMyBandageToInv(playerObj , bandageType)
-   playerObj:getInventory():AddItem("Base."..bandageType)
+   playerObj:getInventory():AddItem(bandageType)
 end
 
 ---@param playerObj IsoPlayer
@@ -251,6 +184,8 @@ function SetMyBandaged(bodyPart,bandageType, bandaged , doctorLevel)
     end
 
 end
+
+
 
 -- 设置绷带剩余时间
 ---@param bodyPart BodyPart
@@ -317,6 +252,8 @@ function IsMyBandaged(bodyPart,BandageType)
     return _playerModData.MyBandageSystem[bodyPartType][BandageType].bandaged
 end
 
+
+
 ISApplyMyBandage = ISBaseTimedAction:derive("ISApplyMyBandage")
 function ISApplyMyBandage:new(character, otherPlayer, itemType, bodyPart, doIt , isUseBandage)
     local o = {}
@@ -356,32 +293,44 @@ function ISApplyMyBandage:isValid()
 end
 
 function ISApplyMyBandage:start()
-    self.character:setHideWeaponModel(true)
     -- 动作开始时的逻辑
-    if self.item then
+    self.character:setHideWeaponModel(true)
+
+    currentBodyPart = self.bodyPart
+    isApplying = true
+    --使用时的物品栏绿色进度条
+    if self.isUseBandage then
         self.item:setJobType("Bandaging")
         self.item:setJobDelta(0.0)
+    else
+        isRemoving = true
     end
     
     -- 设置动画
     self:setActionAnim(CharacterActionAnims.Bandage)
     self:setAnimVariable("BandageType", ISHealthPanel.getBandageType(self.bodyPart))
-    self.sound = self.character:playSound("Bandage")
+    self.sound = self.character:playSound("Bandage")  --TO DO 不生效 需修改
 end
 
 function ISApplyMyBandage:update()
     -- 更新进度
-    if self.item then
+    if self.isUseBandage then
         self.item:setJobDelta(self:getJobDelta())
+
     end
-    
+    bandagingProgress = self:getJobDelta()
 end
 
 function ISApplyMyBandage:stop()
     -- 动作停止时的逻辑
+    self.character:setHideWeaponModel(false)
     if self.item then
         self.item:setJobDelta(0.0)
     end
+
+    isApplying = false
+    isRemoving = false
+    bandagingProgress = 0
     ISBaseTimedAction.stop(self)
 end
 
@@ -399,10 +348,12 @@ function ISApplyMyBandage:perform()
     else
         -- 移除绷带时
         SetMyBandaged(self.bodyPart , self.itemType , false , 0 )
-        -- AddMyBandageToInv(self.character , self.itemType ) --不返还
+        -- AddMyBandageToInv(self.character , self.itemType )
 
     end
 
+    isApplying = false
+    isRemoving = false
     self.character:setHideWeaponModel(false)
     ISBaseTimedAction.perform(self)
 end
@@ -415,7 +366,3 @@ function ISApplyMyBandage:getDuration(doctorLevel)
 
     return duration
 end
-
-
-
-

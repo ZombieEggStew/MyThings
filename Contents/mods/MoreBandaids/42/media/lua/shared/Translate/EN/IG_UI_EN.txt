@@ -1,0 +1,29 @@
+IG_UI_EN = 
+{
+    #menu
+    IGUI_Bandaging = "Applying"
+    IGUI_Removing = "Removing"
+
+    IGUI_UseMyBandage_3 = "Apply Chinstrap Penguin Bandaid"
+    IGUI_UseMyBandage_4 = "Apply King Penguin Bandaid"
+    IGUI_UseMyBandage_5 = "Apply Macaroni Penguin Bandaid"
+
+    IGUI_RemoveMyBandage_3 = "Remove Chinstrap Penguin Bandaid"
+    IGUI_RemoveMyBandage_4 = "Remove King Penguin Bandaid"
+    IGUI_RemoveMyBandage_5 = "Remove Macaroni Penguin Bandaid"
+
+    IGUI_Bandaged_3 = "- Fun!"
+    IGUI_Bandaged_4 = "- Sticking on muscle tape"
+    IGUI_Bandaged_5 = "- Sticker Bomber!"
+
+    # items
+    IGUI_MyBandaid_1 = "Emperor Penguin Bandaid"
+    IGUI_MyBandaid_2 = "Adelie Penguin Bandaid"
+    IGUI_MyBandaid_3 = "Chinstrap Penguin Bandaid"
+    IGUI_MyBandaid_4 = "King Penguin Bandaid"
+    IGUI_MyBandaid_5 = "Macaroni Penguin Bandaid"
+
+
+
+
+}

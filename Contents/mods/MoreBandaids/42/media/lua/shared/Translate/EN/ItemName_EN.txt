@@ -1,0 +1,8 @@
+ItemName_EN = 
+{
+    ItemName_Base.My_Bandaid_1 = "Emperor Penguin Bandaid"
+    ItemName_Base.My_Bandaid_2 = "Adelie Penguin Bandaid"
+    ItemName_Base.My_Bandaid_3 = "Chinstrap Penguin Bandaid"
+    ItemName_Base.My_Bandaid_4 = "King Penguin Bandaid"
+    ItemName_Base.My_Bandaid_5 = "Macaroni Penguin Bandaid"
+}

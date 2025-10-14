@@ -1,0 +1,7 @@
+Tooltip_EN = {
+	Tooltip_MyBandage_1 = "Speeds up the healing of scratches and lacerations.",
+	Tooltip_MyBandage_2 = "Speeds up the healing of stitches.",
+	Tooltip_MyBandage_3 = "No special effect, just for fun.",
+	Tooltip_MyBandage_4 = "Apply to the body to relieve muscle fatigue in the corresponding area.",
+	Tooltip_MyBandage_5 = "Apply anywhere on the body to reduce unhappiness, boredom, and stress",
+}

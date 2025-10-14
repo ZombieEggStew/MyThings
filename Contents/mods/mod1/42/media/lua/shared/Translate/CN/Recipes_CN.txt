@@ -1,4 +1,0 @@
-Recipes_CN = 
-{
-    Recipe_SewComfortableLongjohnsCool = "缝制舒适凉爽连体内衣"
-}

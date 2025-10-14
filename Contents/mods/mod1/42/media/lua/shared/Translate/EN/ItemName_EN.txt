@@ -1,8 +1,0 @@
-ItemName_EN = 
-{
-    ItemName_Base.Comfortable_Longjohns_Cool = "Comfortable Cool Longjohns"
-    ItemName_Base.Comfortable_Longjohns_Warm = "Comfortable Warm Longjohns"
-
-    ItemName_Base.Comfortable_Socks_Cool = "Comfortable Cool Socks"
-    ItemName_Base.Comfortable_Socks_Warm = "Comfortable Warm Socks"
-}

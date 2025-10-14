@@ -65,7 +65,7 @@ module Base
         DisplayCategory = FirstAid,
         Type = Normal,
         Weight = 0.05,
-        Icon = MyBandaid4,
+        Icon = MyBandaid5,
  
         Tooltip = Tooltip_MyBandage_5,
         WorldStaticModel = BandAid,

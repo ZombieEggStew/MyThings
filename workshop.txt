@@ -1,0 +1,7 @@
+version=1
+id=3585463261
+title=企鹅创可贴 Penguin Band-Aid
+description=添加了企鹅创可贴
+description=Added Penguin Band-Aid
+tags=Build 42;Animals;Items;Pop Culture;Silly/Fun;QoL
+visibility=public

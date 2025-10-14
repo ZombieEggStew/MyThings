@@ -1,10 +1,7 @@
 Tooltip_CN = {
-
 	Tooltip_MyBandage_1 = "加快 刮伤 和 撕裂伤 的愈合",
 	Tooltip_MyBandage_2 = "加快 缝合 的愈合",
-	Tooltip_MyBandage_3 = "贴在身上能立刻将体力恢复到最大值，并持续一段时间。但过后会非常疲惫（漫漫长夜强心针）",
+	Tooltip_MyBandage_3 = "没什么用，纯贴着玩",
 	Tooltip_MyBandage_4 = "贴在身体上来缓解对应部位的 肌肉疲劳",
 	Tooltip_MyBandage_5 = "贴在身体上任何部位来减少 不开心 无聊 压力（抽烟压力也能减）",
-
-
 }
