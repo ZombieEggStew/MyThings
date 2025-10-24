@@ -2,15 +2,8 @@ require 'Items/SuburbsDistributions'
 require "Items/ProceduralDistributions"
 require "Vehicles/VehicleDistributions"
 
--- local sandboxVars = SandboxVars.LBO or {}
--- local DropLB = sandboxVars.DropLB or 1
--- local DropMLB = sandboxVars.DropMLB or 1
-
-local DropLB = 1
-local DropMLB = 1
-
--- local isOneWeekLater = getActivatedMods():contains("OneWeekLater")
--- local zombieDropFactor = isOneWeekLater and 0.005 or 0.1
+local sandboxVars = SandboxVars.MyBandaid or {}
+local factor = sandboxVars.Factor or 1
 
 local ItemDist = {
   {
@@ -44,19 +37,19 @@ local ItemDist = {
       {"StoreShelfMedical", 20},
       {"StoreShelfMedical", 10},
       {"VacationStuff", 8},
-      {"WaitingRoomDesk", 4},s
+      {"WaitingRoomDesk", 4},
     },
     Vehicles = {
       {"ArmyGloveBox", 10 },
       {"EvacueeGloveBox", 10},
-      {"AmbulanceTruckBed", 100},
+      {"AmbulanceTruckBed", 10},
       {"EvacueeGloveBox", 10},
     },
     Vehicles_GloveBoxJunk = {
       {"GloveBoxWorkItems", 10},
       {"GloveBoxItems", 10},
     },
-    Items = { 
+    Items = {
         "Base.My_Bandaid_1",
         "Base.My_Bandaid_2",
         "Base.My_Bandaid_3",
@@ -99,7 +92,7 @@ local function preDistributionMerge()
         if weight > 0 then
           local lootTable = getLootTable(dist[1])
           for _, item in ipairs(group.Items) do
-            insertItem(lootTable, item, weight)
+            insertItem(lootTable, item, weight * factor)
           end
         end
       end
@@ -110,7 +103,7 @@ local function preDistributionMerge()
         if weight > 0 then
           local vehicleTable = VehicleDistributions[veh[1]]
           for _, item in ipairs(group.Items) do
-            insertVehicleItem(vehicleTable, item, weight)
+            insertVehicleItem(vehicleTable, item, weight * factor)
           end
         end
       end
@@ -121,7 +114,7 @@ local function preDistributionMerge()
         if weight > 0 then
           local vehicleTable = ClutterTables[veh[1]]
           for _, item in ipairs(group.Items) do
-            insertVehicleItem_2(vehicleTable, item, weight)
+            insertVehicleItem_2(vehicleTable, item, weight * factor)
           end
         end
       end

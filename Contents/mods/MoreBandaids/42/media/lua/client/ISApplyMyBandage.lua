@@ -82,14 +82,15 @@ end)
 ---@param targetPlayer IsoPlayer
 ---@param itemType string
 ---@param isUseBandage boolean
-function ApplyMyBandageAction(character, targetPlayer, bodyPart , itemType , isUseBandage)
+function ApplyMyBandageAction(character, targetPlayer, bodyPart , itemType , isUseBandage , bandageItem)
     local action = ISApplyMyBandage:new(
         character,          -- 使用绷带的玩家
         targetPlayer,    -- 目标玩家
         itemType,     -- 绷带物品
         bodyPart,        -- 身体部位
         true,        -- 是否立即执行
-        isUseBandage
+        isUseBandage,
+        bandageItem
     )
     
     -- 添加到动作队列
@@ -98,50 +99,17 @@ function ApplyMyBandageAction(character, targetPlayer, bodyPart , itemType , isU
     end
 end
 
--- ---@param bodyPart BodyPart
--- ---@param character IsoPlayer
--- ---@param targetPlayer IsoPlayer
--- ---@param itemType string
--- ---@param isUseBandage boolean
--- function RemoveMyBandageAction(character, targetPlayer, bodyPart , itemType , isUseBandage)
---     local action = ISApplyMyBandage:new(
---         character,          -- 使用绷带的玩家
---         targetPlayer,    -- 目标玩家
---         itemType,     -- 绷带物品
---         bodyPart,        -- 身体部位
---         true,        -- 是否立即执行
---         isUseBandage
---     )
-    
---     -- 添加到动作队列
---     if action:isValid() then
---         ISTimedActionQueue.add(action)
---     end
--- end
-
-
 
 ---@param playerObj IsoPlayer
 ---@param bandageType string -- no base
-function RemoveMyBandageFromInv(playerObj , bandageType)
-   playerObj:getInventory():Remove(bandageType)
+function RemoveMyBandageFromInv(bandageItem)
+   bandageItem:getContainer():Remove(bandageItem)
 end
 ---@param playerObj IsoPlayer
 ---@param bandageType string -- no base
 function AddMyBandageToInv(playerObj , bandageType)
    playerObj:getInventory():AddItem(bandageType)
 end
-
----@param playerObj IsoPlayer
----@return InventoryItem?
----@param bandageType string -- no base
-function GetMyBandageFromInv(playerObj , bandageType)
-    local plInv = playerObj:getInventory()
-    local bandageItem = plInv:FindAndReturn("Base."..bandageType)
-
-    return bandageItem
-end
-
 
 
 ---@param bodyPart BodyPart
@@ -254,8 +222,11 @@ end
 
 
 
+
+
+
 ISApplyMyBandage = ISBaseTimedAction:derive("ISApplyMyBandage")
-function ISApplyMyBandage:new(character, otherPlayer, itemType, bodyPart, doIt , isUseBandage)
+function ISApplyMyBandage:new(character, otherPlayer, itemType, bodyPart, doIt , isUseBandage , bandageItem)
     local o = {}
     setmetatable(o, self)
     self.__index = self
@@ -264,7 +235,7 @@ function ISApplyMyBandage:new(character, otherPlayer, itemType, bodyPart, doIt ,
     o.character = character
     o.otherPlayer = otherPlayer
     o.itemType = itemType
-    o.item = character:getInventory():FindAndReturn(itemType)
+    o.item = bandageItem
     o.bodyPart = bodyPart
     o.doIt = doIt
     o.isUseBandage = isUseBandage
@@ -285,11 +256,12 @@ function ISApplyMyBandage:isValid()
     -- 自定义验证逻辑
     if not self.isUseBandage then return true end -- 如果是移除绷带的动作
 
-    local t = self.character:getInventory():contains(self.itemType)
-    if not t then
-        print("no bandage available")
+    if self.item == nil then
+        print("No bandage item to use.")
+        return false
     end
-    return t
+
+    return true
 end
 
 function ISApplyMyBandage:start()
@@ -342,7 +314,7 @@ function ISApplyMyBandage:perform()
 
 
         SetMyBandaged(self.bodyPart , self.itemType , true , doctorLevel)
-        RemoveMyBandageFromInv(self.character , self.itemType )
+        RemoveMyBandageFromInv(self.item)
 
 
     else

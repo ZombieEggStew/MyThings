@@ -1,3 +1,10 @@
 Recipes_EN = 
 {
+    Recipe_MakeBandaid0 = "Make Bandaid"
+    Recipe_MakeBandaid1 = "Make Emperor Penguin Bandaid"
+    Recipe_MakeBandaid2 = "Make Adelie Penguin Bandaid"
+    Recipe_MakeBandaid3 = "Make Chinstrap Penguin Bandaid"
+    Recipe_MakeBandaid4 = "Make King Penguin Bandaid"
+    Recipe_MakeBandaid5 = "Make Macaroni Penguin Bandaid"
 }
+

@@ -1,4 +1,9 @@
 Recipes_CN = 
 {
-
+    Recipe_MakeBandaid0 = "制作创可贴"
+    Recipe_MakeBandaid1 = "制作胡须企鹅创可贴"
+    Recipe_MakeBandaid2 = "制作阿德利企鹅创可贴"
+    Recipe_MakeBandaid3 = "制作斑嘴环企鹅创可贴"
+    Recipe_MakeBandaid4 = "制作王企鹅创可贴"
+    Recipe_MakeBandaid5 = "制作冠企鹅创可贴"
 }

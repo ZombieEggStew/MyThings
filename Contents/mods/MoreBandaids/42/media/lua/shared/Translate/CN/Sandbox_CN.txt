@@ -1,0 +1,5 @@
+Sandbox_CN = {
+   Sandbox_MyBandaid = "企鹅创可贴设置",
+   Sandbox_MyBandaid_Factor = "企鹅创可贴刷新倍率",
+   Sandbox_MyBandaid_Factor_tooltip = "默认为1，等于原版创可贴创新倍率",
+}

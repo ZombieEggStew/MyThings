@@ -1,0 +1,12 @@
+VERSION = 1,
+
+option MyBandaid.Factor
+{
+    type = double,
+    min = 0.1,
+    max = 5.0,
+    default = 1.0,
+    page = MyBandaid,
+    translation = MyBandaid_Factor,
+}
+

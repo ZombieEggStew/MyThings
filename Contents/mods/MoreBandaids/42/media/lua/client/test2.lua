@@ -53,6 +53,46 @@ function myPlayerHandler:new(playerNum , playerObj)
 end
 
 
+---@return InventoryItem | nil
+local function findABandage(bandage_type)
+    if not playerHandler then return nil end
+
+    local bandageItem = playerHandler.playerObj:getInventory():getItemFromType(bandage_type)
+    --local bandageItem = playerHandler.playerObj:getInventory():FindAndReturn(bandage_type)
+
+    if bandageItem then
+        -- print("found bandage in inventory")
+        return bandageItem
+    end
+
+    local worn = playerHandler.playerObj:getWornItems()
+
+    for i = 0 , worn:size() - 1 do
+        local it = worn:getItemByIndex(i)
+        -- local location = worn:getLocation(it)
+        -- if location == "FannyPackFront" or location == "FannyPackBack" then
+        -- end
+        local type = it:getType()
+        local con = it.getItemContainer and it:getItemContainer()
+        if con then
+            --print(type .. " : have container")
+            local bandageItem = con:getItemFromType(bandage_type)
+
+            if bandageItem then
+                --print(type .. " : found bandage")
+                return bandageItem
+            else
+                --print(type .. " : no bandage")
+            end
+        else
+            --print(type .. " : no container")
+        end
+    end
+
+    return nil
+end
+
+
 -- function myPlayerHandler:checkMyBandaidOnBodyPart(bodyPart)
 --     if not bodyPart then return end
 
@@ -209,7 +249,6 @@ local function playerCheck_2()
 
         if isBandage_5 then
             local newConsumptionRate = CONFIG_DefaultBandage_5_ConsumptionRate * (1 + playerHandler.playerObj:getPerkLevel(Perks.Doctor) * 0.1) --每级医疗增加10%消耗速度
-            
 
             local stress2 = playerHandler.stats:getStressFromCigarettes() --压力 0-1 
             local stress = playerHandler.stats:getStress() - stress2 --压力 0-1 太阴险了set和get到的不是一个东西
@@ -249,7 +288,6 @@ local function playerCheck_2()
 end
 
 
--- TO DO 撕下创可贴无法返还
 local og_ISHealthPanel_doBodyPartContextMenu = ISHealthPanel.doBodyPartContextMenu
 function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
     og_ISHealthPanel_doBodyPartContextMenu(self, bodyPart, x, y)
@@ -266,9 +304,11 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
     local isBandage_3 = IsMyBandaged(bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_3)
     local isBandage_4 = IsMyBandaged(bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_4)
     local isBandage_5 = IsMyBandaged(bodyPart ,CONFIG_my_bandageTypes.My_Bandaid_5)
-    local haveBandage_3 = playerHandler.playerObj:getInventory():contains(CONFIG_my_bandageTypes.My_Bandaid_3)
-    local haveBandage_4 = playerHandler.playerObj:getInventory():contains(CONFIG_my_bandageTypes.My_Bandaid_4)
-    local haveBandage_5 = playerHandler.playerObj:getInventory():contains(CONFIG_my_bandageTypes.My_Bandaid_5)
+
+
+    local Bandage_3_InvItem = findABandage(CONFIG_my_bandageTypes.My_Bandaid_3)
+    local Bandage_4_InvItem = findABandage(CONFIG_my_bandageTypes.My_Bandaid_4)
+    local Bandage_5_InvItem = findABandage(CONFIG_my_bandageTypes.My_Bandaid_5)
 
     local playerNum = self.otherPlayer and self.otherPlayer:getPlayerNum() or self.character:getPlayerNum()
 
@@ -295,11 +335,11 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
         removeBandage_4_option.iconTexture = getTexture("media/textures/item_MyBandaid4.png")
     else
     -- apply bandage4
-        if  haveBandage_4 then
+        if  Bandage_4_InvItem then
             local applyBandage_4_option = context:addOption(getText("IGUI_UseMyBandage_4"),nil,function ()
 
                 print("Use My Bandage clicked")
-                ApplyMyBandageAction(self.character, self.otherPlayer or self.character, bodyPart, CONFIG_my_bandageTypes.My_Bandaid_4 ,true)
+                ApplyMyBandageAction(self.character, self.otherPlayer or self.character, bodyPart, CONFIG_my_bandageTypes.My_Bandaid_4 ,true , Bandage_4_InvItem)
             end)
 
             applyBandage_4_option.iconTexture = getTexture("media/textures/item_MyBandaid4.png")
@@ -316,11 +356,11 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
         removeBandage_5_option.iconTexture = getTexture("media/textures/item_MyBandaid5.png")
     else
     -- apply bandage5
-        if  haveBandage_5 then
+        if  Bandage_5_InvItem then
             local applyBandage_5_option = context:addOption(getText("IGUI_UseMyBandage_5"),nil,function ()
 
                 print("Use My Bandage clicked")
-                ApplyMyBandageAction(self.character, self.otherPlayer or self.character, bodyPart, CONFIG_my_bandageTypes.My_Bandaid_5 ,true)
+                ApplyMyBandageAction(self.character, self.otherPlayer or self.character, bodyPart, CONFIG_my_bandageTypes.My_Bandaid_5 ,true , Bandage_5_InvItem)
             end)
 
             applyBandage_5_option.iconTexture = getTexture("media/textures/item_MyBandaid5.png")
@@ -338,11 +378,11 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
         removeBandage_3_option.iconTexture = getTexture("media/textures/item_MyBandaid3.png")
     else
     -- apply bandage3
-        if  haveBandage_3 then
+        if  Bandage_3_InvItem then
             local applyBandage_3_option = context:addOption(getText("IGUI_UseMyBandage_3"),nil,function ()
 
                 print("Use My Bandage clicked")
-                ApplyMyBandageAction(self.character, self.otherPlayer or self.character, bodyPart, CONFIG_my_bandageTypes.My_Bandaid_3 ,true)
+                ApplyMyBandageAction(self.character, self.otherPlayer or self.character, bodyPart, CONFIG_my_bandageTypes.My_Bandaid_3 ,true , Bandage_3_InvItem)
             end)
 
             applyBandage_3_option.iconTexture = getTexture("media/textures/item_MyBandaid3.png")
@@ -385,7 +425,7 @@ function ISHealthBodyPartListBox:doDrawItem(y, item, alt)
         else
             self:drawText(getText("IGUI_Bandaging"), x + progressBarTextMargin_Left, y, .8, .8, .8, 1, UIFont.Small)
         end
-        y = y + progressBarHight
+        y = y + progressBarHight + textMargin_Bottom
     end
 
 

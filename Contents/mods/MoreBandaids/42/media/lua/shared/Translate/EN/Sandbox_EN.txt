@@ -1,0 +1,5 @@
+Sandbox_EN = {
+   Sandbox_MyBandaid = "Penguin Bandage Settings",
+   Sandbox_MyBandaid_Factor = "Penguin Band-Aid refresh rate",
+   Sandbox_MyBandaid_Factor_tooltip = "Defaults to 1, equal to the original Band-Aid refresh rate",
+}

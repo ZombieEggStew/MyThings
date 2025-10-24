@@ -14,7 +14,7 @@ module Base
         Tooltip = Tooltip_MyBandage_1,
         WorldStaticModel = BandAid,
 
-        # Tags = FitsWallet;MyThings,
+        Tags = MyThings,
     }
 
     item My_Bandaid_2
@@ -31,7 +31,7 @@ module Base
         Tooltip = Tooltip_MyBandage_2,
         WorldStaticModel = BandAid,
 
-        # Tags = FitsWallet;MyThings,
+        Tags = MyThings,
     }
     item My_Bandaid_3
     {
@@ -45,7 +45,7 @@ module Base
         Tooltip = Tooltip_MyBandage_3,
         WorldStaticModel = BandAid,
 
-        # Tags = FitsWallet;MyThings,
+        Tags = MyThings,
     }
 
     item My_Bandaid_4
@@ -58,7 +58,7 @@ module Base
         Tooltip = Tooltip_MyBandage_4,
         WorldStaticModel = BandAid,
 
-        # Tags = FitsWallet;MyThings,
+        Tags = MyThings,
     }
     item My_Bandaid_5
     {
@@ -70,7 +70,7 @@ module Base
         Tooltip = Tooltip_MyBandage_5,
         WorldStaticModel = BandAid,
 
-        # Tags = FitsWallet;MyThings,
+        Tags = MyThings,
     }
 
 

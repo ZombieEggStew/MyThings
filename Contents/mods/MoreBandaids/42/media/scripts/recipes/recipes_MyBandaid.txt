@@ -1,0 +1,112 @@
+module Base
+{
+
+    craftRecipe MakeBandaid0
+    {
+        time = 50,
+        Tags = InHandCraft,
+        timedAction = Making,
+        category = Medical,
+        inputs
+        {
+            item 1 tags[MyThings],
+            item 1 [Base.Eraser;Base.CorrectionFluid] mode:keep,
+        }
+        outputs
+        {
+            item 1 Base.Bandaid,
+        }
+    }
+    craftRecipe MakeBandaid1
+    {
+        time = 50,
+        Tags = InHandCraft,
+        timedAction = Making,
+        category = Medical,
+        inputs
+        {
+            item 1 [Base.Bandaid],
+            item 1 tags[BluePen] mode:keep,
+            item 1 tags[RedPen] mode:keep,
+            item 1 tags[GreenPen] mode:keep,
+        }
+        outputs
+        {
+            item 1 Base.My_Bandaid_1,
+        }
+    }
+    craftRecipe MakeBandaid2
+    {
+        time = 50,
+        Tags = InHandCraft,
+        timedAction = Making,
+        category = Medical,
+        inputs
+        {
+            item 1 [Base.Bandaid],
+            item 1 tags[BluePen] mode:keep,
+            item 1 tags[RedPen] mode:keep,
+            item 1 tags[GreenPen] mode:keep,
+        }
+        outputs
+        {
+            item 1 Base.My_Bandaid_2,
+        }
+    }
+    craftRecipe MakeBandaid3
+    {
+        time = 50,
+        Tags = InHandCraft,
+        timedAction = Making,
+        category = Medical,
+        inputs
+        {
+            item 1 [Base.Bandaid],
+            item 1 tags[BluePen] mode:keep,
+            item 1 tags[RedPen] mode:keep,
+            item 1 tags[GreenPen] mode:keep,
+        }
+        outputs
+        {
+            item 1 Base.My_Bandaid_3,
+        }
+    }
+    craftRecipe MakeBandaid4
+    {
+        time = 50,
+        Tags = InHandCraft,
+        timedAction = Making,
+        category = Medical,
+        inputs
+        {
+            item 1 [Base.Bandaid],
+            item 1 tags[BluePen] mode:keep,
+            item 1 tags[RedPen] mode:keep,
+            item 1 tags[GreenPen] mode:keep,
+        }
+        outputs
+        {
+            item 1 Base.My_Bandaid_4,
+        }
+    }
+    craftRecipe MakeBandaid5
+    {
+        time = 50,
+        Tags = InHandCraft,
+        timedAction = Making,
+        category = Medical,
+        inputs
+        {
+            item 1 [Base.Bandaid],
+            item 1 tags[BluePen] mode:keep,
+            item 1 tags[RedPen] mode:keep,
+            item 1 tags[GreenPen] mode:keep,
+        }
+        outputs
+        {
+            item 1 Base.My_Bandaid_5,
+        }
+    }
+
+    
+}
