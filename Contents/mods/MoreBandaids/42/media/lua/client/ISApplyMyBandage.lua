@@ -1,8 +1,7 @@
 local _player = nil
-local _bodyparts = nil
 local _playerModData = nil
-CONFIG_DedaultBandage_4_Duration = 50 -- 默认绷带持续时间
-CONFIG_DedaultBandage_5_Duration = 50 -- 默认绷带持续时间
+CONFIG_DedaultBandage_4_Duration = 50       -- 默认绷带持续时间
+CONFIG_DedaultBandage_5_Duration = 50       -- 默认绷带持续时间
 CONFIG_DefaultBandage_4_ConsumptionRate = 1 -- 绷带消耗速度倍率
 CONFIG_DefaultBandage_5_ConsumptionRate = 1 -- 绷带消耗速度倍率
 local isPlayerCreated = false
@@ -45,26 +44,37 @@ function GetBandagingProgress()
     return bandagingProgress
 end
 
-local function initMyBandageSystem()
+local function initMyBandageSystem(playerObj)
     local system = {}
+    local bodyParts = playerObj:getBodyDamage():getBodyParts()
 
-    for _, part in ipairs(CONFIG_my_bodyParts) do
+    for _, part in pairs(CONFIG_my_bodyParts) do
         system[part] = {}
         for _, bandageType in pairs(CONFIG_my_bandageTypes) do
-            system[part][bandageType] = {bandaged = false, timeLeft = 0}
+            system[part][bandageType] = { bandaged = false, timeLeft = 0 }
         end
     end
+
+    -- for i = 0, bodyParts:size() - 1 do
+
+    --     local part = tostring(bodyParts:get(i):getType())
+    --     print(part)
+    --     system[part] = {}
+    --     for _, bandageType in pairs(CONFIG_my_bandageTypes) do
+    --         system[part][bandageType] = { bandaged = false, timeLeft = 0 }
+    --     end
+    -- end
 
     return system
 end
 
-Events.OnCreatePlayer.Add(function(playerNum,player)
+Events.OnCreatePlayer.Add(function(playerNum, player)
     _player = player
     _playerModData = _player:getModData()
     -- _playerModData.MyBandageSystem = initMyBandageSystem()
 
     if not _playerModData.MyBandageSystem then
-        _playerModData.MyBandageSystem = initMyBandageSystem()
+        _playerModData.MyBandageSystem = initMyBandageSystem(player)
     end
 
     -- for _, v in pairs(_playerModData.MyBandageSystem) do
@@ -82,43 +92,42 @@ end)
 ---@param targetPlayer IsoPlayer
 ---@param itemType string
 ---@param isUseBandage boolean
-function ApplyMyBandageAction(character, targetPlayer, bodyPart , itemType , isUseBandage , bandageItem)
+function ApplyMyBandageAction(character, targetPlayer, bodyPart, itemType, isUseBandage, bandageItem)
     local action = ISApplyMyBandage:new(
-        character,          -- 使用绷带的玩家
-        targetPlayer,    -- 目标玩家
+        character,    -- 使用绷带的玩家
+        targetPlayer, -- 目标玩家
         itemType,     -- 绷带物品
-        bodyPart,        -- 身体部位
-        true,        -- 是否立即执行
+        bodyPart,     -- 身体部位
+        true,         -- 是否立即执行
         isUseBandage,
         bandageItem
     )
-    
+
     -- 添加到动作队列
     if action:isValid() then
         ISTimedActionQueue.add(action)
     end
 end
 
-
 ---@param playerObj IsoPlayer
 ---@param bandageType string -- no base
 function RemoveMyBandageFromInv(bandageItem)
-   bandageItem:getContainer():Remove(bandageItem)
-end
----@param playerObj IsoPlayer
----@param bandageType string -- no base
-function AddMyBandageToInv(playerObj , bandageType)
-   playerObj:getInventory():AddItem(bandageType)
+    bandageItem:getContainer():Remove(bandageItem)
 end
 
+---@param playerObj IsoPlayer
+---@param bandageType string -- no base
+function AddMyBandageToInv(playerObj, bandageType)
+    playerObj:getInventory():AddItem(bandageType)
+end
 
 ---@param bodyPart BodyPart
 ---@param bandaged boolean
 ---@param defaultDuration number
 ---@param bandageType string
 ---@param doctorLevel integer
-function SetMyBandaged(bodyPart,bandageType, bandaged , doctorLevel)
-    local bodyPartType = tostring(bodyPart:getType())
+function SetMyBandaged(bodyPart, bandageType, bandaged, doctorLevel)
+    local bodyPartType = BodyPartType.ToString(bodyPart:getType())
     if not _playerModData then
         print("no player moddata1")
         return
@@ -139,33 +148,23 @@ function SetMyBandaged(bodyPart,bandageType, bandaged , doctorLevel)
     local duration = defaultDuration * (1 + doctorLevel * 0.1)
 
     -- 保存到 ModData
-    if bandaged then
-        _playerModData.MyBandageSystem[bodyPartType][bandageType] = {
-            bandaged = true,
-            timeLeft = duration
-        }
-    else
-        _playerModData.MyBandageSystem[bodyPartType][bandageType] = {
-            bandaged = false,
-            timeLeft = 0
-        }
-    end
-
+    _playerModData.MyBandageSystem[bodyPartType][bandageType] = {
+        bandaged = bandaged,
+        timeLeft = duration
+    }
 end
-
-
 
 -- 设置绷带剩余时间
 ---@param bodyPart BodyPart
 ---@param timeLeft number
 ---@param bandageType string
-function SetMyBandageTimeLeft(bodyPart, bandageType,timeLeft)
-    local bodyPartType = tostring(bodyPart:getType())
+function SetMyBandageTimeLeft(bodyPart, bandageType, timeLeft)
+    local bodyPartType = BodyPartType.ToString(bodyPart:getType())
     if not _playerModData then
         print("no player moddata2")
         return
     end
-    
+
     if _playerModData.MyBandageSystem and _playerModData.MyBandageSystem[bodyPartType] then
         _playerModData.MyBandageSystem[bodyPartType][bandageType].timeLeft = timeLeft
     end
@@ -175,28 +174,27 @@ end
 ---@param bodyPart BodyPart
 ---@return number
 ---@param bandageType string
-function GetMyBandageTimeLeft(bodyPart,bandageType)
-    local bodyPartType = tostring(bodyPart:getType())
+function GetMyBandageTimeLeft(bodyPart, bandageType)
+    local bodyPartType = BodyPartType.ToString(bodyPart:getType())
 
     if not _playerModData then
         print("no player moddata3")
         return 0
     end
-    
+
     if not _playerModData.MyBandageSystem or not _playerModData.MyBandageSystem[bodyPartType] then
-        return  0
+        return 0
     end
-    
+
     return _playerModData.MyBandageSystem[bodyPartType][bandageType].timeLeft
 end
-
 
 -- 添加一个获取状态的函数
 ---@param bodyPart BodyPart
 ---@return boolean
 ---@param BandageType string
-function IsMyBandaged(bodyPart,BandageType)
-    local bodyPartType = tostring(bodyPart:getType())
+function IsMyBandaged(bodyPart, BandageType)
+    local bodyPartType = BodyPartType.ToString(bodyPart:getType())
     if not _playerModData then
         print("no player moddata4")
         return false
@@ -206,31 +204,26 @@ function IsMyBandaged(bodyPart,BandageType)
         print("error1")
         return false
     end
-    
+
     if not _playerModData.MyBandageSystem then
         print("error2")
-        return  false
+        return false
     end
 
     if not _playerModData.MyBandageSystem[bodyPartType] then
         print("error3")
-        return  false
+        return false
     end
-    
+
     return _playerModData.MyBandageSystem[bodyPartType][BandageType].bandaged
 end
 
-
-
-
-
-
 ISApplyMyBandage = ISBaseTimedAction:derive("ISApplyMyBandage")
-function ISApplyMyBandage:new(character, otherPlayer, itemType, bodyPart, doIt , isUseBandage , bandageItem)
+function ISApplyMyBandage:new(character, otherPlayer, itemType, bodyPart, doIt, isUseBandage, bandageItem)
     local o = {}
     setmetatable(o, self)
     self.__index = self
-    
+
     -- 基础属性设置
     o.character = character
     o.otherPlayer = otherPlayer
@@ -248,7 +241,7 @@ function ISApplyMyBandage:new(character, otherPlayer, itemType, bodyPart, doIt ,
     o.stopOnRun = true
     o.bandagedPlayerX = otherPlayer:getX()
     o.bandagedPlayerY = otherPlayer:getY()
-    
+
     return o
 end
 
@@ -277,18 +270,17 @@ function ISApplyMyBandage:start()
     else
         isRemoving = true
     end
-    
+
     -- 设置动画
     self:setActionAnim(CharacterActionAnims.Bandage)
     self:setAnimVariable("BandageType", ISHealthPanel.getBandageType(self.bodyPart))
-    self.sound = self.character:playSound("Bandage")  --TO DO 不生效 需修改
+    self.sound = self.character:playSound("Bandage") --TO DO 不生效 需修改
 end
 
 function ISApplyMyBandage:update()
     -- 更新进度
     if self.isUseBandage then
         self.item:setJobDelta(self:getJobDelta())
-
     end
     bandagingProgress = self:getJobDelta()
 end
@@ -313,15 +305,12 @@ function ISApplyMyBandage:perform()
         local doctorLevel = self.character:getPerkLevel(Perks.Doctor)
 
 
-        SetMyBandaged(self.bodyPart , self.itemType , true , doctorLevel)
+        SetMyBandaged(self.bodyPart, self.itemType, true, doctorLevel)
         RemoveMyBandageFromInv(self.item)
-
-
     else
         -- 移除绷带时
-        SetMyBandaged(self.bodyPart , self.itemType , false , 0 )
+        SetMyBandaged(self.bodyPart, self.itemType, false, 0)
         -- AddMyBandageToInv(self.character , self.itemType )
-
     end
 
     isApplying = false
@@ -331,7 +320,6 @@ function ISApplyMyBandage:perform()
 end
 
 function ISApplyMyBandage:getDuration(doctorLevel)
-
     -- 计算动作持续时间
     local duration = 200 * (1 - doctorLevel * 0.05) -- 每级减少5%时间
 

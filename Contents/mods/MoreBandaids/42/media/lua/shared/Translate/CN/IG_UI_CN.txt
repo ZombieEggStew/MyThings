@@ -4,9 +4,9 @@ IG_UI_CN =
     IGUI_Bandaging = "正在使用"
     IGUI_Removing = "正在移除"
 
-    IGUI_UseMyBandage_3 = "使用斑嘴环企鹅创可贴"
-    IGUI_UseMyBandage_4 = "使用王企鹅创可贴"
-    IGUI_UseMyBandage_5 = "使用冠企鹅创可贴"
+    IGUI_Use_My_Bandaid_3 = "使用斑嘴环企鹅创可贴"
+    IGUI_Use_My_Bandaid_4 = "使用王企鹅创可贴"
+    IGUI_Use_My_Bandaid_5 = "使用冠企鹅创可贴"
 
     IGUI_RemoveMyBandage_3 = "移除斑嘴环企鹅创可贴"
     IGUI_RemoveMyBandage_4 = "移除王企鹅创可贴"

@@ -4,9 +4,9 @@ IG_UI_EN =
     IGUI_Bandaging = "Applying"
     IGUI_Removing = "Removing"
 
-    IGUI_UseMyBandage_3 = "Apply Chinstrap Penguin Bandaid"
-    IGUI_UseMyBandage_4 = "Apply King Penguin Bandaid"
-    IGUI_UseMyBandage_5 = "Apply Macaroni Penguin Bandaid"
+    IGUI_Use_My_Bandaid_3 = "Apply Chinstrap Penguin Bandaid"
+    IGUI_Use_My_Bandaid_4 = "Apply King Penguin Bandaid"
+    IGUI_Use_My_Bandaid_5 = "Apply Macaroni Penguin Bandaid"
 
     IGUI_RemoveMyBandage_3 = "Remove Chinstrap Penguin Bandaid"
     IGUI_RemoveMyBandage_4 = "Remove King Penguin Bandaid"
