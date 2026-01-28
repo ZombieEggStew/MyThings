@@ -92,30 +92,11 @@ local function findABandage(bandage_type)
 end
 
 
--- function myPlayerHandler:checkMyBandaidOnBodyPart(bodyPart)
---     if not bodyPart then return end
-
---     -- 检查是否有绷带
---     if bodyPart:bandaged() then
---         -- 获取绷带类型
---         local bandageType = bodyPart:getBandageType()
---         -- 检查是否是我的绷带
---         for _, myBandageType in ipairs(MY_BANDAGE_TYPES_BASE) do
---             if bandageType == myBandageType then
---                 return true
---             end
---         end
---     end
---     return false
--- end
-
-
 local test___ = ISApplyBandage.complete
 function ISApplyBandage:complete()
     test___(self)
 
     local bandage = self.item
-
 
     -- 移除绷带
     if not bandage then
@@ -145,66 +126,49 @@ function ISApplyBandage:complete()
     -- print("Bandage applied")
 end
 
--- everyMinute
-local function playerCheck()
-    if not playerHandler then return end
-    if not playerHandler.bodyParts then return end
-
-
-    for i = 0, playerHandler.bodyParts:size() - 1 do
-        local bodyPart = playerHandler.bodyParts:get(i)
-        print(tostring(bodyPart:getType()) .. tostring(bodyPart:getBandageType()) .. tostring(bodyPart:bandaged()))
-
-        -- 加快烧伤恢复
-        -- if bodyPart:isBurnt() then
-        --     local t = bodyPart:getBurnTime()
-        --     print(t)
-
-        --     if bodyPart:getBandageType() == MY_BANDAGE_2_TYPE_BASE and t > 0 then
-        --         bodyPart:setBurnTime(math.max(0,t - .05))
-        --     end
-        -- end
-
-        local t = bodyPart:getStitchTime()
-
-        if bodyPart:stitched() then
-            if bodyPart:getBandageType() == MY_BANDAGE_2_TYPE_BASE and t < 50 then
-                bodyPart:setStitchTime(math.min(50, t + 1))
-            end
-        end
-    end
-end
-
-
---TO DO 为是否减低恐慌添加沙盒设置
 --everySecond
 local function playerCheck_2()
     if not playerHandler then return end
     if not playerHandler.bodyParts then return end
 
-    local fatigue = playerHandler.stats:getFatigue() --疲惫 0-1
-    -- print("fatigue is "..fatigue)
-
-    local endurance = playerHandler.stats:getEndurance() -- 耐力 0-1
-    -- print("endurance is "..endurance)
-
-    local panic = playerHandler.stats:getPanic() --恐慌 0-100
-    -- print("panic is "..panic)
-
-
-
     for i = 0, playerHandler.bodyParts:size() - 1 do
         local bodyPart = playerHandler.bodyParts:get(i)
-
         local bandageType__ = bodyPart:getBandageType()
-
-
+        local isBandage_3 = IsMyBandaged(bodyPart, CONFIG_my_bandageTypes.My_Bandaid_3)
         local isBandage_4 = IsMyBandaged(bodyPart, CONFIG_my_bandageTypes.My_Bandaid_4)
         local isBandage_5 = IsMyBandaged(bodyPart, CONFIG_my_bandageTypes.My_Bandaid_5)
 
         -- if (not isBandage_4) and (not isBandage_5) then
         --     return
         -- end
+
+        if isBandage_3 then
+            local newConsumptionRate = CONFIG_DefaultBandage_3_ConsumptionRate *
+                (1 + playerHandler.playerObj:getPerkLevel(Perks.Doctor) * 0.1) --每级医疗增加10%消耗速度 1-2
+
+            local fatigue = playerHandler.stats:get(CharacterStat.FATIGUE)     --疲惫 0-1
+            print("fatigue is " .. fatigue)
+
+            local endurance = playerHandler.stats:get(CharacterStat.ENDURANCE) -- 耐力 0-1
+            print("endurance is " .. endurance)
+
+            -- local panic = playerHandler.stats:get(CharacterStat.PANIC) --恐慌 0-100
+            -- print("panic is " .. panic)
+
+            local newFatigue = math.max(0, fatigue - newConsumptionRate * .01) --疲惫 -0.01~-0.02
+            playerHandler.stats:set(CharacterStat.FATIGUE, newFatigue)
+
+            local newEndurance = math.min(1, endurance + newConsumptionRate * .02) --耐力 +0.01~-0.02
+            playerHandler.stats:set(CharacterStat.ENDURANCE, newEndurance)
+
+            local timeLeft = GetMyBandageTimeLeft(bodyPart, CONFIG_my_bandageTypes.My_Bandaid_3)
+            local newTimeLeft = timeLeft - 1
+
+            SetMyBandageTimeLeft(bodyPart, CONFIG_my_bandageTypes.My_Bandaid_3, newTimeLeft)
+            if newTimeLeft <= 0 then
+                SetMyBandaged(bodyPart, CONFIG_my_bandageTypes.My_Bandaid_3, false, 0)
+            end
+        end
 
 
         if bodyPart:bandaged() and bandageType__ == MY_BANDAGE_2_TYPE_BASE then
@@ -217,10 +181,9 @@ local function playerCheck_2()
 
 
         local stiffness = bodyPart:getStiffness()
-        -- print(bodyPart:getType())
-        -- print("stiffness is "..stiffness)
 
         if stiffness > 0 and isBandage_4 then
+            print("stiffness is " .. stiffness)
             local newConsumptionRate = CONFIG_DefaultBandage_4_ConsumptionRate *
                 (1 + playerHandler.playerObj:getPerkLevel(Perks.Doctor) * 0.1) --每级医疗增加10%消耗速度
             -- print("newConsumptionRate is "..newConsumptionRate)
@@ -238,32 +201,31 @@ local function playerCheck_2()
 
         if isBandage_5 then
             local newConsumptionRate = CONFIG_DefaultBandage_5_ConsumptionRate *
-                (1 + playerHandler.playerObj:getPerkLevel(Perks.Doctor) * 0.1) --每级医疗增加10%消耗速度
+                (1 + playerHandler.playerObj:getPerkLevel(Perks.Doctor) * 0.1)         --每级医疗增加10%消耗速度
 
-            local stress2 = playerHandler.stats:getStressFromCigarettes()      --压力 0-1
-            local stress = playerHandler.stats:getStress() -
-                stress2                                                        --压力 0-1 太阴险了set和get到的不是一个东西
-            print("stress is " .. stress)
-            print("stress2 is " .. stress2)
+            local stress2 = playerHandler.stats:get(CharacterStat.NICOTINE_WITHDRAWAL) -- 压力0-1
+            print("Nicotinestress is " .. stress2)
 
+            local stress = playerHandler.stats:get(CharacterStat.STRESS) -- 压力
+            print("stess is " .. stress)
 
-            local unhappyness = playerHandler.bodyDamage:getUnhappynessLevel() -- 不开心 0-100
-            -- print("unhappyness is "..unhappyness)
+            local unhappyness = playerHandler.stats:get(CharacterStat.UNHAPPINESS) -- 不开心 0-100
+            print("unhappyness is " .. unhappyness)
 
-            local boardness = playerHandler.bodyDamage:getBoredomLevel() -- 无聊 0-100
-
+            local boardness = playerHandler.stats:get(CharacterStat.BOREDOM) -- 无聊 0-100
+            print("boardness is " .. boardness)
 
             local newUnhappyness = math.max(0, unhappyness - newConsumptionRate) -- 不开心 - 1~2
-            playerHandler.bodyDamage:setUnhappynessLevel(newUnhappyness)
-
-            local newStress = math.max(0, stress - newConsumptionRate * .01) --压力  -.01~.02
-            playerHandler.stats:setStress(newStress)
-
-            local newStress2 = math.max(0, stress2 - (newConsumptionRate * .01 - (stress - newStress))) --压力  先减少普通压力，减到0之后减少抽烟压力
-            playerHandler.stats:setStressFromCigarettes(newStress2)
+            playerHandler.stats:set(CharacterStat.UNHAPPINESS, newUnhappyness)
 
             local newBoardness = math.max(0, boardness - newConsumptionRate) -- 无聊  - 1~2
-            playerHandler.bodyDamage:setBoredomLevel(newBoardness)
+            playerHandler.stats:set(CharacterStat.BOREDOM, newBoardness)
+
+            local newStress = math.max(0, stress - newConsumptionRate * .01) --压力  -.01~.02
+            playerHandler.stats:set(CharacterStat.STRESS, newStress)
+
+            local newStress2 = math.max(0, stress2 - (newConsumptionRate * .01 - (stress - newStress))) --压力  先减少普通压力，减到0之后减少抽烟压力
+            playerHandler.stats:set(CharacterStat.NICOTINE_WITHDRAWAL, newStress2)
 
 
             local timeLeft = GetMyBandageTimeLeft(bodyPart, CONFIG_my_bandageTypes.My_Bandaid_5)
@@ -311,8 +273,6 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
 
     context:bringToTop()
     context:setVisible(true)
-
-
 
 
     -- remove bandage4
@@ -383,7 +343,6 @@ function ISHealthPanel:doBodyPartContextMenu(bodyPart, x, y)
     end
 end
 
--- TO DO 实现进度条显示
 local og_ISHealthBodyPartListBox_doDrawItem = ISHealthBodyPartListBox.doDrawItem
 function ISHealthBodyPartListBox:doDrawItem(y, item, alt)
     -- 调用原始函数并获取返回的y坐标
@@ -423,10 +382,20 @@ function ISHealthBodyPartListBox:doDrawItem(y, item, alt)
 
 
 
+    if isBandage_3 then
+        self:drawText(
+            getText("IGUI_Bandaged_3") ..
+            " : " .. math.floor(GetMyBandageTimeLeft(item.item.bodyPart, CONFIG_my_bandageTypes.My_Bandaid_3)), x, y,
+            0.28, 0.89,
+            0.28, 1,
+            UIFont.Small)
+        y = y + fontHgt + textMargin_Bottom
+    end
     if isBandage_4 then
         self:drawText(
             getText("IGUI_Bandaged_4") ..
-            " : " .. math.floor(GetMyBandageTimeLeft(item.item.bodyPart, CONFIG_my_bandageTypes.My_Bandaid_4)), x, y, 0.28, 0.89,
+            " : " .. math.floor(GetMyBandageTimeLeft(item.item.bodyPart, CONFIG_my_bandageTypes.My_Bandaid_4)), x, y,
+            0.28, 0.89,
             0.28, 1,
             UIFont.Small)
         y = y + fontHgt + textMargin_Bottom
@@ -435,35 +404,16 @@ function ISHealthBodyPartListBox:doDrawItem(y, item, alt)
     if isBandage_5 then
         self:drawText(
             getText("IGUI_Bandaged_5") ..
-            " : " .. math.floor(GetMyBandageTimeLeft(item.item.bodyPart, CONFIG_my_bandageTypes.My_Bandaid_5)), x, y, 0.28, 0.89,
+            " : " .. math.floor(GetMyBandageTimeLeft(item.item.bodyPart, CONFIG_my_bandageTypes.My_Bandaid_5)), x, y,
+            0.28, 0.89,
             0.28, 1,
             UIFont.Small)
         y = y + fontHgt + textMargin_Bottom
     end
-    if isBandage_3 then
-        self:drawText(getText("IGUI_Bandaged_3"), x, y, 0.28, 0.89, 0.28, 1, UIFont.Small)
-        y = y + fontHgt + textMargin_Bottom
-    end
-
-
-
-
-
 
 
     local t = self.textRight
     self.textRight = math.max(t, self:getWidth())
-
-
-
-
-
-
-
-
-
-
-
 
 
     y = y + 5
@@ -474,10 +424,6 @@ local interval = 1 -- 游戏世界中实际间隔1秒
 local timeAcc = 0
 
 
-
--- Events.EveryOneMinute.Add(playerCheck)
-
-
 Events.OnTick.Add(function()
     local dt = getGameTime():getMultipliedSecondsSinceLastUpdate()
     timeAcc = timeAcc + dt
@@ -486,20 +432,6 @@ Events.OnTick.Add(function()
         playerCheck_2()
     end
 end)
-
--- local function accelerateAllActions()
---     local player = getPlayer()
---     if not player then print("qweeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee ") return end
-
---     -- 获取角色统计数据
---     local stats = player:getStats()
-
---     -- 设置全局动作乘数（默认1.0，大于1加快，小于1减慢）
---     player:getModData().actionSpeedMultiplier = 10 -- 加快50%
-
---     -- 或者通过修改特定属性来影响各种动作
--- end
-
 
 
 Events.OnCreatePlayer.Add(function(playerNum, player)
@@ -529,43 +461,55 @@ local fun1 = function(_playerNum, _context, _items)
         print("no player")
         return
     end
-    local bandageOption = _context:addOptionOnTop(getText("IGUI_Use_" .. itemType), nil, nil)
-    local node = ISContextMenu:getNew(_context)
-    _context:addSubMenu(bandageOption, node)
-
-    -- local t = player:getBodyDamage():getBodyParts()
-    -- for i = 0, t:size() - 1 do
-    --     local bodyPart = t:get(i)
-    --     print(bodyPart:getType())
-    -- end
-
     local md = player:getModData()
-    local bodyParts = player:getBodyDamage():getBodyParts()
-    for i = 0, bodyParts:size() - 1 do
-        local part = bodyParts:get(i)
-        local partType = part:getType()
-        local type = BodyPartType.ToString(partType)
-        local bandageSys = md.MyBandageSystem[type]
+    local bodyDamage = player:getBodyDamage()
+    local bodyParts = bodyDamage:getBodyParts()
+    local head_Type = BodyPartType.ToString(BodyPartType.Head)
+    local groin_Type = BodyPartType.ToString(BodyPartType.Groin)
+
+    if itemType == CONFIG_my_bandageTypes.My_Bandaid_4 then
+        local bandageOption = _context:addOptionOnTop(getText("IGUI_Use_" .. itemType), nil, nil)
+        bandageOption.iconTexture = getTexture("media/textures/item_MyBandaid4.png")
+        local node = ISContextMenu:getNew(_context)
+        _context:addSubMenu(bandageOption, node)
+
+        local t = player:getBodyDamage():getBodyParts()
+        for i = 0, t:size() - 1 do
+            local bodyPart = t:get(i)
+            print(bodyPart:getType())
+        end
 
 
+        for i = 0, bodyParts:size() - 1 do
+            local part = bodyParts:get(i)
+            local partType = part:getType()
+            local type = BodyPartType.ToString(partType)
+            local bandageSys = md.MyBandageSystem[type]
 
-        if bandageSys[itemType].bandaged == false then
-            node:addOption(BodyPartType.getDisplayName(partType), nil, function()
-                ApplyMyBandageAction(player, player, part,
-                    itemType, true, item)
+            if bandageSys[itemType].bandaged == false then
+                node:addOption(BodyPartType.getDisplayName(partType), nil, function()
+                    ApplyMyBandageAction(player, player, part,
+                        itemType, true, item)
+                end)
+            else
+
+            end
+        end
+    elseif itemType == CONFIG_my_bandageTypes.My_Bandaid_3 then
+        if md.MyBandageSystem[head_Type][itemType].bandaged == false then
+            local option4 = _context:addOptionOnTop(getText("IGUI_Use_" .. itemType), nil, function()
+                ApplyMyBandageAction(player, player, bodyDamage:getBodyPart(BodyPartType.Head), itemType, true, item)
             end)
-        else
-            -- print(part .. " : " .. itemType .. " : bandaged , time left : " .. t[itemType].timeLeft)
+            option4.iconTexture = getTexture("media/textures/item_MyBandaid3.png")
+        end
+    elseif itemType == CONFIG_my_bandageTypes.My_Bandaid_5 then
+        if md.MyBandageSystem[groin_Type][itemType].bandaged == false then
+            local option4 = _context:addOptionOnTop(getText("IGUI_Use_" .. itemType), nil, function()
+                ApplyMyBandageAction(player, player, bodyDamage:getBodyPart(BodyPartType.Groin), itemType, true, item)
+            end)
+            option4.iconTexture = getTexture("media/textures/item_MyBandaid5.png")
         end
     end
-    -- for _, part in pairs(CONFIG_my_bodyParts) do
-    --     local bandageSys = md.MyBandageSystem[part]
-    --     if bandageSys[itemType].bandaged == false then
-    --         node:addOption(getText("IGUI_health_" .. part), nil, function()
-
-    --         end)
-    --     end
-    -- end
 end
 
 Events.OnFillInventoryObjectContextMenu.Add(fun1)
@@ -577,3 +521,13 @@ Events.OnFillInventoryObjectContextMenu.Add(fun1)
 --TO DO 为所有绷带添加耐久
 --TO DO 测试60帧 无highFPSmod
 --TO DO 使用moddata储存progress
+-- local testFunc = function(_playerNum, _context, _items)
+--     if not playerHandler then return end
+--     _context:addOptionOnTop("Test", nil, function()
+--         local speed = playerHandler.playerObj:getMoveSpeed()
+--         print("Player move speed: " .. speed)
+
+--     end)
+-- end
+
+-- Events.OnFillWorldObjectContextMenu.Add(testFunc)

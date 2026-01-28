@@ -12,7 +12,7 @@ IG_UI_CN =
     IGUI_RemoveMyBandage_4 = "移除王企鹅创可贴"
     IGUI_RemoveMyBandage_5 = "移除冠企鹅创可贴"
 
-    IGUI_Bandaged_3 = "- 好玩!"
+    IGUI_Bandaged_3 = "- 超级生产力!"
     IGUI_Bandaged_4 = "- 贴上肌贴"
     IGUI_Bandaged_5 = "- 贴纸炸弹人!"
 

@@ -1,7 +1,9 @@
 local _player = nil
 local _playerModData = nil
+CONFIG_DedaultBandage_3_Duration = 50       -- 默认绷带持续时间
 CONFIG_DedaultBandage_4_Duration = 50       -- 默认绷带持续时间
 CONFIG_DedaultBandage_5_Duration = 50       -- 默认绷带持续时间
+CONFIG_DefaultBandage_3_ConsumptionRate = 1 -- 绷带消耗速度倍率
 CONFIG_DefaultBandage_4_ConsumptionRate = 1 -- 绷带消耗速度倍率
 CONFIG_DefaultBandage_5_ConsumptionRate = 1 -- 绷带消耗速度倍率
 local isPlayerCreated = false
@@ -137,12 +139,14 @@ function SetMyBandaged(bodyPart, bandageType, bandaged, doctorLevel)
         _playerModData.MyBandageSystem = {}
         print("no modData mybandagesystem")
     end
-    local defaultDuration = 0
+    local defaultDuration = 50
 
     if bandageType == CONFIG_my_bandageTypes.My_Bandaid_4 then
         defaultDuration = CONFIG_DedaultBandage_4_Duration
     elseif bandageType == CONFIG_my_bandageTypes.My_Bandaid_5 then
         defaultDuration = CONFIG_DedaultBandage_5_Duration
+    elseif bandageType == CONFIG_my_bandageTypes.My_Bandaid_3 then
+        defaultDuration = CONFIG_DedaultBandage_3_Duration
     end
 
     local duration = defaultDuration * (1 + doctorLevel * 0.1)

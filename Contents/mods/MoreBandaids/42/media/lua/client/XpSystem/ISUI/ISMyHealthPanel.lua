@@ -7,37 +7,43 @@ local test = {
     My_Bandaid_5 = "My_Bandaid_5"
 }
 
-local function IsMyBandaged2(md,bodyPart, BandageType)
+local function IsMyBandaged2(md, bodyPart, BandageType)
     local bodyPartType = BodyPartType.ToString(bodyPart:getType())
     return md.MyBandageSystem[bodyPartType][BandageType].bandaged
 end
 
 function ISHealthPanel:getDamagedParts()
     local result = {}
+    local seen = {} -- 辅助表，用于跟踪已插入的 bodyPart
     local bodyParts = self:getPatient():getBodyDamage():getBodyParts()
     local md = self:getPatient():getModData()
     if isClient() and not self:getPatient():isLocalPlayer() then
         bodyParts = self:getPatient():getBodyDamageRemote():getBodyParts()
     end
-    for i=1,bodyParts:size() do
-        local bodyPart = bodyParts:get(i-1)
+    for i = 1, bodyParts:size() do
+        local bodyPart = bodyParts:get(i - 1)
         local bodyPartAction = self.bodyPartAction and self.bodyPartAction[bodyPart]
 
         -- if true then
         --     table.insert(result, bodyPart)
         -- end
 
-        if ISHealthPanel.cheat or bodyPart:HasInjury() or bodyPart:bandaged() or bodyPart:stitched() or bodyPart:getSplintFactor() > 0 or bodyPart:getAdditionalPain() > 10 or bodyPart:getStiffness() > 5  or (isDebug and bodyPart:getStiffness() > 0) then
-            table.insert(result, bodyPart)
-        end
-
-        for _, bandageType in pairs(test) do
-            if IsMyBandaged2(md,bodyPart , bandageType) then
+        if ISHealthPanel.cheat or bodyPart:HasInjury() or bodyPart:bandaged() or bodyPart:stitched() or bodyPart:getSplintFactor() > 0 or bodyPart:getAdditionalPain() > 10 or bodyPart:getStiffness() > 5 or (isDebug and bodyPart:getStiffness() > 0) then
+            if not seen[bodyPart] then
                 table.insert(result, bodyPart)
-                break
+                seen[bodyPart] = true -- 标记为已插入
             end
         end
 
+        for _, bandageType in pairs(test) do
+            if IsMyBandaged2(md, bodyPart, bandageType) then
+                if not seen[bodyPart] then
+                    table.insert(result, bodyPart)
+                    seen[bodyPart] = true -- 标记为已插入
+                end
+                break
+            end
+        end
     end
     return result
 end

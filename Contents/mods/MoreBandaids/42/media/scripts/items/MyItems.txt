@@ -3,12 +3,10 @@ module Base
     item My_Bandaid_1
     {
         DisplayCategory = FirstAid,
-        Type = Normal,
+        ItemType = base:normal,
         Weight = 0.05,
         Icon = MyBandaid1,
-        Alcoholic = true,
-
-        BandagePower = 2,  --影响绷带变脏时间
+        BandagePower = 2, 
         CanBandage = true,
         Medical = true,
         Tooltip = Tooltip_MyBandage_1,
@@ -20,12 +18,10 @@ module Base
     item My_Bandaid_2
     {
         DisplayCategory = FirstAid,
-        Type = Normal,
+        ItemType = base:normal,
         Weight = 0.05,
         Icon = MyBandaid2,
-        Alcoholic = true,
-
-        BandagePower = 4,  --影响绷带变脏时间
+        BandagePower = 4,
         CanBandage = true,
         Medical = true,
         Tooltip = Tooltip_MyBandage_2,
@@ -36,7 +32,7 @@ module Base
     item My_Bandaid_3
     {
         DisplayCategory = FirstAid,
-        Type = Normal,
+        ItemType = base:normal,
         Weight = 0.05,
         Icon = MyBandaid3,
 
@@ -51,7 +47,7 @@ module Base
     item My_Bandaid_4
     {
         DisplayCategory = FirstAid,
-        Type = Normal,
+        ItemType = base:normal,
         Weight = 0.05,
         Icon = MyBandaid4,
  
@@ -63,7 +59,7 @@ module Base
     item My_Bandaid_5
     {
         DisplayCategory = FirstAid,
-        Type = Normal,
+        ItemType = base:normal,
         Weight = 0.05,
         Icon = MyBandaid5,
  
